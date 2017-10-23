@@ -1,17 +1,22 @@
 //-----------------------------------------------------------------------------
+// Craig Young 2014
+// Christian Herrmann, 2017
+//
 // This code is licensed to you under the terms of the GNU GPL, version 2 or,
 // at your option, any later version. See the LICENSE.txt file for the text of
 // the license.
 //-----------------------------------------------------------------------------
-// CRC32
+// StandAlone Mod
 //-----------------------------------------------------------------------------
 
-#ifndef __CRC32_H
-#define __CRC32_H
-#include <stddef.h>
-#include <stdint.h>
+#ifndef __HF_YOUNG_H
+#define __HF_YOUNG_H
 
-void crc32(const uint8_t *data, const size_t len, uint8_t *crc);
-void crc32_append(uint8_t *data, const size_t len);
+#include <stdbool.h> // for bool
+#include "standalone.h" // standalone definitions
+#include "iso14443a.h"
+#include "protocols.h"
+ 
+#define OPTS 2
 
-#endif
+#endif /* __HF_YOUNG_H */
