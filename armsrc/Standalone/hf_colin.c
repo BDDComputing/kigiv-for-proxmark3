@@ -103,28 +103,27 @@ void RunMod() {
      French VIGIK system @2017
 */
 
-#define STKEYS 38
+#define STKEYS 35
 
     const uint64_t mfKeys[STKEYS] = {
         0xffffffffffff, // TRANSPORTS
         0x000000000000, // Blankkey
-        0x484558414354, // INFINEONON A / 0F SEC B
+        0x484558414354, // INFINEONON A / 0F SEC B / INTRATONE / HEXACT...
         0x414c41524f4e, // ALARON NORALSY
         0x424c41524f4e, // BLARON NORALSY
         0x4a6352684677, // COMELIT A General Key  / 08 [2] 004
         0x536653644c65, // COMELIT B General Key  / 08 [2] 004
-        0x021209197591, // Lost the name of this one
-        0x8829da9daf76, // URMET CAPTIV IF A => ALL A/B
-        0xb0b1b2b3b4b5, // NA
-        0xaabbccddeeff, // NA
-        0x4d3a99c351dd, // NA
-        0x1a982c7e459a, // NA
-        0xd3f7d3f7d3f7, // NA
-        0x714c5c886e97, // NA
-        0x587ee5f9350f, // NA
-        0xa0478cc39091, // NA
-        0x533cb6c723f6, // NA
-        0x8fd0a4f256e9, // NA
+        0x8829da9daf76, // URMET CAPTIV IF A => ALL A/B / BTICINO
+        0xb0b1b2b3b4b5, // NA DERIVATE B # 1
+        0xaabbccddeeff, // NA DERIVATE B # 1
+        0x4d3a99c351dd, // NA DERIVATE B # 1
+        0x1a982c7e459a, // NA DERIVATE B # 1
+        0xd3f7d3f7d3f7, // NA DERIVATE B # 1
+        0x714c5c886e97, // NA DERIVATE B # 1
+        0x587ee5f9350f, // NA DERIVATE B # 1
+        0xa0478cc39091, // NA DERIVATE B # 1
+        0x533cb6c723f6, // NA DERIVATE B # 1
+        0x8fd0a4f256e9, // NA DERIVATE B # 1
         0xa0a1a2a3a4a5, // PUBLIC BLOC0 BTICINO MAD ACCESS
         0x021209197591, // BTCINO UNDETERMINED SPREAKD 0x01->0x13 key
         0xa22ae129c013, // INFINEON B 00
