@@ -103,7 +103,7 @@ void RunMod() {
      French VIGIK system @2017
 */
 
-#define STKEYS 35
+#define STKEYS 37
 
     const uint64_t mfKeys[STKEYS] = {
         0xffffffffffff, // TRANSPORTS
@@ -111,6 +111,8 @@ void RunMod() {
         0x484558414354, // INFINEONON A / 0F SEC B
         0x414c41524f4e, // ALARON NORALSY
         0x424c41524f4e, // BLARON NORALSY
+        0x4a6352684677, // ?? A General Key da612a71 / 08 [2] 004
+        0x536653644c65, // ?? B General Key da612a71 / 08 [2] 004
         0x8829da9daf76, // URMET CAPTIV IF A => ALL A/B
         0xb0b1b2b3b4b5, // NA
         0xaabbccddeeff, // NA
