@@ -1,6 +1,6 @@
 # KIGIV(c)
 
-[![Build Status](https://travis-ci.org/cjbrigato/kigiv-for-proxmark3.svg?branch=kigiv-for-proxmark3-master)](https://travis-ci.org/cjbrigato/kigiv-for-proxmark3)[![Coverity Status](https://scan.coverity.com/projects/14115/badge.svg)](https://scan.coverity.com/project/cjbrigato-kigiv-for-proxmark3)[![Latest release](https://img.shields.io/github/release/cjbrigato/kigib-for-proxmark3.svg)](https://github.com/cjbrigato/kigiv-for-proxmark3/releases/latest)
+[![Build Status](https://travis-ci.org/cjbrigato/kigiv-for-proxmark3.svg?branch=kigiv-for-proxmark-master)](https://travis-ci.org/cjbrigato/kigiv-for-proxmark3)[![Coverity Status](https://scan.coverity.com/projects/14115/badge.svg)](https://scan.coverity.com/project/cjbrigato-kigiv-for-proxmark3)[![Latest release](https://img.shields.io/github/release/cjbrigato/kigib-for-proxmark3.svg)](https://github.com/cjbrigato/kigiv-for-proxmark3/releases/latest)
 
 ## from Vigik "20years of (un)sercurity without a single update";
 
