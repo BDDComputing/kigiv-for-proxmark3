@@ -208,7 +208,8 @@ typedef struct {
 
 #define CMD_HF_SNIFFER 0x0800
 
-#define CMD_UNKNOWN 0xFFFF
+#define CMD_UNKNOWN                                                       0xFFFF
+#define CMD_ANY                                               0xFFFFFFFFFFFFFFFF
 
 // Mifare simulation flags
 #define FLAG_INTERACTIVE 0x01
