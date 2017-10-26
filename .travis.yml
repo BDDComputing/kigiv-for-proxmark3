@@ -1,3 +1,9 @@
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "ko25Gk2Qdq0he+q4BRSPwyfZVWblVckbZH3iI0qbvSHwEMzWvrGQZ2I72Dw72VSAqgbzWHVnM6HQychrhri/SkQ+fIQ6rLx4pPGHop+e3n1ecMpnIrYD8wYNVayoBkhhqzp0CWGONeCrxcD4oIK0RSONY/6IhHgPSPrsR2Hm5bKkpkQTI4ZjUJI/hR5Oz2ue7JWVrCES8Xu9Z+5/hsPR5/Zq6OdnrCRFAcndOh5wP4Wmu/fwFzMdBnPHtppG9j3TYNSGZ7c+p7vcFcUvNwsOlLGa9KMV5knPmuAjShptuxBKFZqteQyyJOlZhrdWvg4zybiMopm2TiGP2L6zW+x86eftaXFoUnhe3qa88otXGe7tXQ1WfvqgDlzBHNgDJWSr2baZxQvqEFAoBK+9zr9//cXKUHaYjl2H7HQZC2sZGtBjfGX0BlZccORklrIS2EeYxx83xPuzJV00Lww22uJgqQjp1tyhkeVFHwAmZKzcmydSCy2QDjo6Iatw6mMm3feXg7yUtLzq8voWCaeN1V7vBMJ4HOPDxapbGbus6n5Aukg3LHWQr/k0qUK1D4FZhYVfWd0J5IxESjnGQThEeJk46Z6W0QmRU4FZggMn6ohQFcrSRmVe4194AtXEfe+siq0WEZw1eyUUIE/Q697/NlimktmIwpwtQp8Tj1RuqNuxm0I="
+
 # Travis-CI Build for IcemanFork/Proxmark3
 language: c
 
@@ -16,6 +22,8 @@ matrix:
       sudo: required
 
 before_install:
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
 ## Install ARM toolchain on Linux.
 ## add our homebrew tap for MacOS
 ## Note: all dependencies on MacOS should be resolved by the brew install command
@@ -43,3 +51,15 @@ script:
   elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then 
     ./client/proxmark3 -h ;
   fi
+
+addons:
+  coverity_scan:
+    project:
+      name: "cjbrigato/kigiv-for-proxmark3"
+      description: "Build submitted via Travis CI"
+    notification_email: colin@brigato.fr
+    build_command_prepend: "make clean"
+    build_command:   "make all"
+    branch_pattern: coverity_scan
+
+
