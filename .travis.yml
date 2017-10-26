@@ -22,8 +22,7 @@ matrix:
       sudo: required
 
 before_install:
-  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-
+  echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 ## Install ARM toolchain on Linux.
 ## add our homebrew tap for MacOS
 ## Note: all dependencies on MacOS should be resolved by the brew install command
