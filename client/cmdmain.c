@@ -9,19 +9,19 @@
 //-----------------------------------------------------------------------------
 
 #include "cmdmain.h"
-#include "cmdcrc.h"
+
 #include "cmddata.h"
 #include "cmdhf.h"
 #include "cmdhw.h"
 #include "cmdlf.h"
 #include "cmdparser.h"
-#include "cmdscript.h"
 #include "data.h"
 #include "proxmark3.h"
 #include "ui.h"
 #include "usb_cmd.h"
 #include "util.h"
 #include "util_posix.h"
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,10 +36,13 @@ static int CmdRev(const char *Cmd);
 // For storing command that are received from the device
 #define CMD_BUFFER_SIZE 50
 static UsbCommand cmdBuffer[CMD_BUFFER_SIZE];
+
 // Points to the next empty position to write to
 static int cmd_head; // Starts as 0
 // Points to the position of the last unread command
 static int cmd_tail; // Starts as 0
+// to lock cmdBuffer operations from different threads
+static pthread_mutex_t cmdBufferMutex = PTHREAD_MUTEX_INITIALIZER;
 
 static command_t CommandTable[] = {{"help", CmdHelp, 1, "This help. Use '<command> help' for details of a particular command."},
                                    {"data", CmdData, 1, "{ Plot window / data buffer manipulation... }"},
@@ -73,7 +76,9 @@ int CmdRev(const char *Cmd) {
  */
 void clearCommandBuffer() {
     // This is a very simple operation
+    pthread_mutex_lock(&cmdBufferMutex);
     cmd_tail = cmd_head;
+    pthread_mutex_unlock(&cmdBufferMutex);
 }
 
 /**
@@ -81,6 +86,7 @@ void clearCommandBuffer() {
  * @param UC
  */
 void storeCommand(UsbCommand *command) {
+    pthread_mutex_lock(&cmdBufferMutex);
     if ((cmd_head + 1) % CMD_BUFFER_SIZE == cmd_tail) {
         // If these two are equal, we're about to overwrite in the
         // circular buffer.
@@ -91,6 +97,7 @@ void storeCommand(UsbCommand *command) {
     memcpy(destination, command, sizeof(UsbCommand));
 
     cmd_head = (cmd_head + 1) % CMD_BUFFER_SIZE; // increment head and wrap
+    pthread_mutex_unlock(&cmdBufferMutex);
 }
 
 /**
@@ -98,17 +105,21 @@ void storeCommand(UsbCommand *command) {
  * @param response location to write command
  * @return 1 if response was returned, 0 if nothing has been received
  */
+
 int getCommand(UsbCommand *response) {
+    pthread_mutex_lock(&cmdBufferMutex);
     // If head == tail, there's nothing to read, or if we just got initialized
     if (cmd_head == cmd_tail) {
+        pthread_mutex_unlock(&cmdBufferMutex);
         return 0;
     }
     // Pick out the next unread command
     UsbCommand *last_unread = &cmdBuffer[cmd_tail];
     memcpy(response, last_unread, sizeof(UsbCommand));
+
     // Increment tail - this is a circular buffer, so modulo buffer size
     cmd_tail = (cmd_tail + 1) % CMD_BUFFER_SIZE;
-
+    pthread_mutex_unlock(&cmdBufferMutex);
     return 1;
 }
 
@@ -121,9 +132,38 @@ int getCommand(UsbCommand *response) {
  * @param ms_timeout
  * @return true if command was returned, otherwise false
  */
+
 bool WaitForResponseTimeoutW(uint32_t cmd, UsbCommand *response, size_t ms_timeout, bool show_warning) {
 
     UsbCommand resp;
+
+    if (response == NULL) {
+        response = &resp;
+    }
+
+    uint64_t start_time = msclock();
+
+    // Wait until the command is received
+    while (true) {
+        while (getCommand(response)) {
+            if (response->cmd == cmd) {
+                return true;
+            }
+        }
+        if (msclock() - start_time > ms_timeout) {
+            break;
+        }
+        if (msclock() - start_time > 2000 && show_warning) {
+            PrintAndLog("Waiting for a response from the proxmark...");
+            PrintAndLog("Don't forget to cancel its operation first by pressing on the button");
+            break;
+        }
+    }
+    return false;
+}
+
+bool WaitForResponseTimeout(uint32_t cmd, UsbCommand *response, size_t ms_timeout) {
+    return WaitForResponseTimeoutW(cmd, response, ms_timeout, true);
 
     if (response == NULL) {
         response = &resp;
