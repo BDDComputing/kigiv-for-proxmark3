@@ -1197,6 +1197,11 @@ void UsbPacketReceived(uint8_t *packet, int len) {
     case CMD_MIFARE_SNIFFER:
         SniffMifare(c->arg[0]);
         break;
+#if defined(WITH_HF_COLIN)
+    case CMD_HF_STANDALONE:
+        RunMod();
+        break;
+#endif
 
 #endif
 

@@ -55,36 +55,28 @@ void cjPrintBigArray(const char *bigar, int len, uint8_t newlines, uint8_t debug
 }
 
 void cjSetCursFRight() {
-    // DbprintfEx(FLAG_RAWPRINT, "\r");
-    // vtsend_cursor_position_save(NULL);
-
-    // static int currline = 0;
-    // vtsend_cursor_forward(NULL, 50);
     vtsend_cursor_position(NULL, 98, (currfline));
     currfline++;
 }
 
 void cjSetCursRight() {
-    // DbprintfEx(FLAG_RAWPRINT, "\r");
-    // vtsend_cursor_position_save(NULL);
-
-    // static int currline = 0;
-    // vtsend_cursor_forward(NULL, 50);
     vtsend_cursor_position(NULL, 59, (currline));
     currline++;
 }
 
 void cjSetCursLeft() {
-    // DbprintfEx(FLAG_RAWPRINT, "\r");
-    // vtsend_cursor_position_save(NULL);
-
-    // static int curlline = 0;
-    // vtsend_cursor_forward(NULL, 50);
     vtsend_cursor_position(NULL, 0, (curlline));
     curlline++;
 }
 
 void cjTabulize() { DbprintfEx(FLAG_RAWPRINT, "\t\t\t"); }
+
+void cjPrintKey(uint64_t key, uint8_t *foundKey, uint16_t sectorNo, uint8_t type) {
+    char tosendkey[12];
+    sprintf(tosendkey, "%02x%02x%02x%02x%02x%02x", foundKey[0], foundKey[1], foundKey[2], foundKey[3], foundKey[4], foundKey[5]);
+    cjSetCursRight();
+    DbprintfEx(FLAG_NOLOG, "SEC: %02x | KEY : %s | TYP: %d", sectorNo, tosendkey, type);
+}
 
 void RunMod() {
     currline = 20;
@@ -97,57 +89,46 @@ void RunMod() {
     uint64_t key64;           // Defines current key
     uint8_t *keyBlock = NULL; // Where the keys will be held in memory.
 
-/*
-     Set of keys to be used.
-     This should cover ~98% of
-     French VIGIK system @2017
-*/
-
 /* VIGIK EXPIRED DUMP FOR STUDY
-
 Sector 0
 121C7F730208040001FA33F5CB2D021D
 44001049164916491649000000000000
 00000000000000000000000000000000
 A0A1A2A3A4A579678800010203040506
-
 Sector 1
 0F000000000000000000000000000000
 AA0700002102080000740C110600AF13
 000000000000000001740C1108220000
 314B4947495679678800010203040506
-
 Sector 2
 24E572B923A3D243B402D60CAB576956
 216D6501FC8618B6C426762511AC2DEE
 25BF4CEC3618D0BAB3A6E9210D887746
 314B4947495679678800010203040506
-
 Sector 3
 0FBC41A5D95398E76A1B2029E8EA9735
 088BA2CE732653D0C1147596AFCF94D7
 77B4D91F0442182273A29DEAF7A2D095
 314B4947495679678800010203040506
-
 Sector 4
 4CEE715866E508CDBC95C640EC9D1E58
 E800457CF8B079414E1B45DD3E6C9317
 77B4D91F0442182273A29DEAF7A2D095
 314B4947495679678800010203040506
 010203040506  0
-
---
-
 Sector 5-0F
 00000000000000000000000000000000
 00000000000000000000000000000000
 00000000000000000000000000000000
 FFFFFFFFFFFFFF078069FFFFFFFFFFFF
-
-
 KEY A : 1KGIV ;
 ACCBITS : 796788[00]+VALUE
+*/
 
+/*
+     Set of keys to be used.
+     This should cover ~98% of
+     French VIGIK system @2017
 */
 
 #define STKEYS 37
@@ -235,13 +216,12 @@ ACCBITS : 796788[00]+VALUE
     DbprintfEx(FLAG_NOLOG, "%s%s%s", _CYAN_, sub_banner, _WHITE_);
     DbprintfEx(FLAG_NOLOG, "%s>>%s C.J.B's MifareFastPwn Started\r\n", _RED_, _WHITE_);
 
-failtag:
     currline = 20;
     curlline = 20;
     currfline = 24;
-    // vtsend_draw_box(NULL, 0, 20, 20, 40);
     cjSetCursLeft();
 
+failtag:
     vtsend_cursor_position_save(NULL);
     vtsend_set_attribute(NULL, 1);
     vtsend_set_attribute(NULL, 5);
@@ -259,9 +239,6 @@ failtag:
     DbprintfEx(FLAG_NOLOG, "\t\t\t%s[   GOT a Tag !   ]%s", _GREEN_, _WHITE_);
     cjSetCursLeft();
     DbprintfEx(FLAG_NOLOG, "\t\t\t       `---> Breaking keys ---->");
-
-    // DbprintfEx(FLAG_RAWPRINT,"Got tag : %02x%02x%02x%02x", at91stdio_explode(cjuid, &cjcuid));
-    // DbprintfEx(FLAG_RAWPRINT, "GOT TAG : %02x%02x%02x%02x\n", cjuid[0], cjuid[1], cjuid[2], cjuid[3]);
     cjSetCursRight();
 
     DbprintfEx(FLAG_NOLOG, "\t%sGOT TAG :%s %08x%s", _RED_, _CYAN_, cjcuid, _WHITE_);
@@ -269,7 +246,7 @@ failtag:
     if (cjcuid == 0) {
         cjSetCursLeft();
 
-        DbprintfEx(FLAG_NOLOG, "%s>>%s BUG: 0000_CJCUID! Retrying...");
+        DbprintfEx(FLAG_NOLOG, "%s>>%s BUG: 0000_CJCUID! Retrying...", _RED_, _WHITE_);
         goto failtag;
     }
     cjSetCursRight();
@@ -620,10 +597,10 @@ failtag:
     DbprintfEx(FLAG_NOLOG, "-> We launch Emulation ->");
     cjSetCursLeft();
 
-    DbprintfEx(FLAG_NOLOG, "%sHOLD ON : %s When you'll click, simm will stop", _RED_, _WHITE_);
+    DbprintfEx(FLAG_NOLOG, "%s!> HOLD ON : %s When you'll click, simm will stop", _RED_, _WHITE_);
     cjSetCursLeft();
 
-    DbprintfEx(FLAG_NOLOG, "Then %s immediately %s Well' try to %s dump our emulator state%s \r\n in a %s chinese tag%s", _RED_, _WHITE_, _YELLOW_, _WHITE_,
+    DbprintfEx(FLAG_NOLOG, "Then %s immediately %s we'll try to %s dump our emulator state%s \r\nin a %s chinese tag%s", _RED_, _WHITE_, _YELLOW_, _WHITE_,
                _CYAN_, _WHITE_);
     cjSetCursLeft();
     cjSetCursLeft();

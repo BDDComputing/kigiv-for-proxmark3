@@ -12,6 +12,7 @@
 #ifndef CMDHFICLASS_H__
 #define CMDHFICLASS_H__
 
+#include <stddef.h>
 int CmdHFiClass(const char *Cmd);
 
 int CmdHFiClassCalcNewKey(const char *Cmd);
