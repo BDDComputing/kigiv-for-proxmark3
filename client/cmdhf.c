@@ -774,39 +774,38 @@ int CmdHFList(const char *Cmd) {
     return 0;
 }
 
-int CmdHFSearch(const char *Cmd) {
-    int ans = 0;
-    PrintAndLog("");
-    ans = CmdHF14AReader("s");
-    if (ans > 0) {
-        PrintAndLog("\nValid ISO14443A Tag Found - Quiting Search\n");
-        return ans;
-    }
-    ans = HFiClassReader("", false, false);
-    if (ans) {
-        PrintAndLog("\nValid iClass Tag (or PicoPass Tag) Found - Quiting Search\n");
-        return ans;
-    }
-    ans = HF15Reader("", false);
-    if (ans) {
-        PrintAndLog("\nValid ISO15693 Tag Found - Quiting Search\n");
-        return ans;
-    }
-    // 14b is longest test currently (and rarest chip type) ... put last
-    ans = HF14BInfo(false);
-    if (ans) {
-        PrintAndLog("\nValid ISO14443B Tag Found - Quiting Search\n");
-        return ans;
-    }
-    PrintAndLog("\nno known/supported 13.56 MHz tags found\n");
-    return 0;
-}
-
 int CmdHFSnoop(const char *Cmd) {
     char *pEnd;
     UsbCommand c = {CMD_HF_SNIFFER, {strtol(Cmd, &pEnd, 0), strtol(pEnd, &pEnd, 0), 0}};
     SendCommand(&c);
     return 0;
+}
+int CmdHFSearch(const char *Cmd){
+	int ans = 0;
+	PrintAndLog("");
+	ans = CmdHF14AInfo("s");
+	if (ans > 0) {
+		PrintAndLog("\nValid ISO14443A Tag Found - Quiting Search\n");
+		return ans;
+	}
+	ans = HFiClassReader("", false, false);
+	if (ans) {
+		PrintAndLog("\nValid iClass Tag (or PicoPass Tag) Found - Quiting Search\n");
+		return ans;
+	}
+	ans = HF15Reader("", false);
+	if (ans) {
+		PrintAndLog("\nValid ISO15693 Tag Found - Quiting Search\n");
+		return ans;
+	}
+	//14b is longest test currently (and rarest chip type) ... put last
+	ans = HF14BInfo(false);
+	if (ans) {
+		PrintAndLog("\nValid ISO14443B Tag Found - Quiting Search\n");
+		return ans;
+	}
+	PrintAndLog("\nno known/supported 13.56 MHz tags found\n");
+	return 0;
 }
 
 int CmdHFStandalone(const char *Cmd) {
