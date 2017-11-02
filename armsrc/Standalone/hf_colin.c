@@ -125,11 +125,11 @@ KEY A : 1KGIV ;
 ACCBITS : 796788[00]+VALUE
 */
 
-/*
-     Set of keys to be used.
-     This should cover ~98% of
-     French VIGIK system @2017
-*/
+//----------------------------
+//   Set of keys to be used.
+//  This should cover ~98% of
+//  French VIGIK system @2017
+//----------------------------
 
 #define STKEYS 37
 
@@ -173,7 +173,7 @@ ACCBITS : 796788[00]+VALUE
         0x22729a9bd40f  // INFINEON B 0E
     };
 
-    /* Can remember something like that in case of Bigbuf */
+    // Can remember something like that in case of Bigbuf
     keyBlock = BigBuf_malloc(STKEYS * 6);
     int mfKeysCnt = sizeof(mfKeys) / sizeof(uint64_t);
 
@@ -181,10 +181,9 @@ ACCBITS : 796788[00]+VALUE
         num_to_bytes(mfKeys[mfKeyCounter], 6, (uint8_t *)(keyBlock + mfKeyCounter * 6));
     }
 
-    /* TODO : remember why we actually had need to initialize this array in such specific case
-       and why not a simple memset abuse to 0xffize the whole space in one go ? */
-    // uint8_t foundKey[2][40][6]; //= [ {0xff} ]; /* C99 abusal 6.7.8.21 */
-
+    // TODO : remember why we actually had need to initialize this array in such specific case
+    //   and why not a simple memset abuse to 0xffize the whole space in one go ?
+    // uint8_t foundKey[2][40][6]; //= [ {0xff} ]; /* C99 abusal 6.7.8.21
     uint8_t foundKey[2][40][6];
     for (uint16_t t = 0; t < 2; t++) {
         for (uint16_t sectorNo = 0; sectorNo < sectorsCnt; sectorNo++) {
@@ -196,13 +195,11 @@ ACCBITS : 796788[00]+VALUE
     }
 
     int key = -1;
-    // int block = 0;
     bool err = 0;
     bool trapped = 0;
     bool allKeysFound = true;
 
-    uint32_t size = mfKeysCnt; /* what’s the point for copy ? int should be
-                                  uint32_t in this case, same deal */
+    uint32_t size = mfKeysCnt;
     LED_A_OFF();
     LED_B_OFF();
     LED_C_OFF();
@@ -233,7 +230,6 @@ failtag:
         WDT_HIT();
     }
     FpgaWriteConfWord(FPGA_MAJOR_MODE_OFF);
-    // SpinDelay(100);
     SpinDelay(200);
     vtsend_cursor_position_restore(NULL);
     DbprintfEx(FLAG_NOLOG, "\t\t\t%s[   GOT a Tag !   ]%s", _GREEN_, _WHITE_);
@@ -259,17 +255,17 @@ failtag:
     uint32_t end_time;
     uint32_t start_time = end_time = GetTickCount();
 
-    /////////////////////////////////////////////////////////
+    //---------------------------------------------------------------------------
     // WE SHOULD FIND A WAY TO GET UID TO AVOID THIS "TESTRUN"
-
-    // HERE IS TO BE THOUGHT AS ONLY A KEY SHOULD BE CHECK
-    // THEN WE FILL EMULATOR WITH KEY
-    // WHEN WE FILL EMULATOR CARD WITH A KEY
-    // IF THERE IS ANY FAIL DURING ANY POINT, WE START BACK CHECKING B KEYS
-    // THEN FILL EMULATOR WITH B KEEY
-    // THEN EMULATOR WITH CARD WITH B KEY
-    // IF IT HAS FAILED OF ANY OF SORT THEN WE ARE MARRON LIKE POMALO.
-
+    // --------------------------------------------------------
+    // + HERE IS TO BE THOUGHT AS ONLY A KEY SHOULD BE CHECK
+    // `-+ THEN WE FILL EMULATOR WITH KEY
+    // `-+ WHEN WE FILL EMULATOR CARD WITH A KEY
+    // `-+ IF THERE IS ANY FAIL DURING ANY POINT, WE START BACK CHECKING B KEYS
+    // `-+ THEN FILL EMULATOR WITH B KEEY
+    // `-+ THEN EMULATOR WITH CARD WITH B KEY
+    // `-+ IF IT HAS FAILED OF ANY OF SORT THEN WE ARE MARRON LIKE POMALO.
+    //----------------------------------------------------------------------------
     // AN EVEN BETTER IMPLEMENTATION IS TO CHECK EVERY KEY FOR SECTOR 0 KEY A
     // THEN IF FOUND CHECK THE SAME KEY FOR NEXT SECTOR ONLY KEY A
     // THEN IF FAIL CHECK EVERY SECTOR A KEY FOR EVERY OTHER KEY BUT NOT THE BLOCK
@@ -283,11 +279,10 @@ failtag:
     // DERIVATION
     // THEN IF B KEY IS NOT OF THIS SCHEME CHECK EVERY REMAINING B KEYED SECTOR
     // WITH EVERY REMAINING KEYS, BUT DISCARDING ANY DEFAULT TRANSPORT KEYS.
-    /////////////////////////////////////////////////////
-
+    //-----------------------------------------------------------------------------
     // also we could avoid first UID check for every block
 
-    /* then let’s expose this “optimal case” of “well known vigik schemes” : */
+    // then let’s expose this “optimal case” of “well known vigik schemes” :
     for (uint8_t type = 0; type < 2 && !err && !trapped; type++) {
         for (int sec = 0; sec < sectorsCnt && !err && !trapped; ++sec) {
             key = cjat91_saMifareChkKeys(sec * 4, type, NULL, size, &keyBlock[0], &key64);
@@ -295,7 +290,7 @@ failtag:
             if (key == -1) {
                 err = 1;
                 allKeysFound = false;
-                /* used in “portable” imlementation on microcontroller: it reports back the fail and open the standalone lock */
+                // used in “portable” imlementation on microcontroller: it reports back the fail and open the standalone lock
                 // cmd_send(CMD_CJB_FSMSTATE_MENU, 0, 0, 0, 0, 0);
                 break;
             } else if (key == -2) {
