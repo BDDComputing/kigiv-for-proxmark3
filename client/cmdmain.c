@@ -49,7 +49,7 @@ static command_t CommandTable[] = {{"help", CmdHelp, 1, "This help. Use '<comman
                                    {"hf", CmdHF, 1, "{ High Frequency commands... }"},
                                    {"hw", CmdHW, 1, "{ Hardware commands... }"},
                                    {"lf", CmdLF, 1, "{ Low Frequency commands... }"},
-                                   {"reveng", CmdRev, 1, "Crc calculations from the software reveng1-30"},
+//                                   {"reveng", CmdRev, 1, "Crc calculations from the software reveng1-30"},
                                    {"script", CmdScript, 1, "{ Scripting commands }"},
                                    {"quit", CmdQuit, 1, "Exit program"},
                                    {"exit", CmdQuit, 1, "Exit program"},
@@ -63,10 +63,10 @@ int CmdHelp(const char *Cmd) {
 
 int CmdQuit(const char *Cmd) { return 99; }
 
-int CmdRev(const char *Cmd) {
+/*int CmdRev(const char *Cmd) {
     CmdCrc(Cmd);
     return 0;
-}
+}*/
 
 /**
  * @brief This method should be called when sending a new command to the pm3. In case any old
@@ -133,26 +133,8 @@ int getCommand(UsbCommand *response) {
  * @return true if command was returned, otherwise false
  */
 
-	uint64_t start_time = msclock();
-	
-	// Wait until the command is received
-	while (true) {
-		while(getCommand(response)) {
-			if(response->cmd == cmd){
-				return true;
-			}
-		}
-		if (msclock() - start_time > ms_timeout) {
-			break;
-		}
-		if (msclock() - start_time > 2000 && show_warning) {
-			PrintAndLog("Waiting for a response from the proxmark...");
-			PrintAndLog("Don't forget to cancel its operation first by pressing on the button");
-			show_warning = false;
-		}
-	}
-	return false;
-}
+bool WaitForResponseTimeoutW(uint32_t cmd, UsbCommand *response, size_t ms_timeout, bool show_warning) {
+
 
     UsbCommand resp;
 

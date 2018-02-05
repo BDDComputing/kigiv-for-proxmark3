@@ -676,16 +676,6 @@ uint16_t printTraceLine(uint16_t tracepos, uint16_t traceLen, uint8_t *trace, ui
     return tracepos;
 }
 
-int CmdHFList(const char *Cmd) {
-    bool showWaitCycles = false;
-    bool markCRCBytes = false;
-    char type[40] = {0};
-    int tlen = param_getstr(Cmd, 0, type);
-    char param1 = param_getchar(Cmd, 1);
-    char param2 = param_getchar(Cmd, 2);
-    bool errors = false;
-    uint8_t protocol = 0;
-    // Validate params
 
 int CmdHFList(const char *Cmd)
 {
