@@ -687,9 +687,17 @@ int CmdHFList(const char *Cmd) {
     uint8_t protocol = 0;
     // Validate params
 
-    if (tlen == 0) {
-        errors = true;
-    }
+int CmdHFList(const char *Cmd)
+{
+	bool showWaitCycles = false;
+	bool markCRCBytes = false;
+	char type[40] = {0};
+	int tlen = param_getstr(Cmd,0,type, sizeof(type));
+	char param1 = param_getchar(Cmd, 1);
+	char param2 = param_getchar(Cmd, 2);
+	bool errors = false;
+	uint8_t protocol = 0;
+	//Validate params
 
     if (param1 == 'h' || (param1 != 0 && param1 != 'f' && param1 != 'c') || (param2 != 0 && param2 != 'f' && param2 != 'c')) {
         errors = true;

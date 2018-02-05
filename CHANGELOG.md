@@ -14,6 +14,8 @@ This project uses the changelog in accordance with [keepchangelog](http://keepac
 - `hf mf chk` Move main cycle to arm (Merlok)
 - Changed proxmark command line parameter `flush` to `-f` or `-flush` (Merlok)
 - Changed `hf 14a reader` to just reqest-anticilission-select sequence (Merlok)
+- Changed `hf 14a raw` - works with LED's and some exchange logic (Merlok)
+- Changed TLV parser messages to more convenient (Merlok)
 
 ### Fixed
 - Changed start sequence in Qt mode (fix: short commands hangs main Qt thread) (Merlok)
@@ -35,6 +37,15 @@ This project uses the changelog in accordance with [keepchangelog](http://keepac
 - Added to proxmark ability to execute commands from stdin (pipe) (Merlok)
 - Added `hf 14a info` and moved there functionality from `hf 14a reader` (Merlok)
 - Added to `hf 14a info` detection of weak prng from Iceman1001 fork (Merlok)
+- Added to `hf 14a apdu` - exchange apdu via iso1443-4 (Merlok)
+- Added to `hf 14a apdu` - apdu and tlv results parser (Merlok)
+- Added `hf emv` group of commands (Merlok)
+- Added `hf emv search` `hf emv pse` - commands for selection of EMV application (Merlok)
+- Added `hf emv select` - command for select EMV application (Merlok)
+- Added `hf emv exec` - command for execute EMV transaction (Merlok)
+- Added to `hf emv exec` MSD path for VISA and Mastercard and some other compatible EMV cards (Merlok)
+- Added to `hf emv exec` SDA, DDA, fast DDA, CDA calculations for VISA and Mastercard and some other compatible EMV cards (Merlok)
+- Added `hf emv test` - crypto tests for DES, AES, SHA, RSA, SDA, DDA, CDA and some other crypto functions (Merlok)
 
 ## [3.0.1][2017-06-08]
 

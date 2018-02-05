@@ -32,7 +32,6 @@ unsigned int current_command = CMD_UNKNOWN;
 
 static int CmdHelp(const char *Cmd);
 static int CmdQuit(const char *Cmd);
-static int CmdRev(const char *Cmd);
 
 // For storing command that are received from the device
 #define CMD_BUFFER_SIZE 50
@@ -134,7 +133,26 @@ int getCommand(UsbCommand *response) {
  * @return true if command was returned, otherwise false
  */
 
-bool WaitForResponseTimeoutW(uint32_t cmd, UsbCommand *response, size_t ms_timeout, bool show_warning) {
+	uint64_t start_time = msclock();
+	
+	// Wait until the command is received
+	while (true) {
+		while(getCommand(response)) {
+			if(response->cmd == cmd){
+				return true;
+			}
+		}
+		if (msclock() - start_time > ms_timeout) {
+			break;
+		}
+		if (msclock() - start_time > 2000 && show_warning) {
+			PrintAndLog("Waiting for a response from the proxmark...");
+			PrintAndLog("Don't forget to cancel its operation first by pressing on the button");
+			show_warning = false;
+		}
+	}
+	return false;
+}
 
     UsbCommand resp;
 

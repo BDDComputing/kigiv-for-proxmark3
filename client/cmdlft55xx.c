@@ -236,7 +236,7 @@ int CmdT55xxSetConfig(const char *Cmd) {
 			cmdp+=2;
 			break;
 		case 'd':
-			param_getstr(Cmd, cmdp+1, modulation);
+			param_getstr(Cmd, cmdp+1, modulation, sizeof(modulation));
 			cmdp += 2;
 
 			if ( strcmp(modulation, "FSK" ) == 0) {
@@ -1433,7 +1433,7 @@ int CmdT55xxBruteForce(const char *Cmd) {
 			//The line start with # is comment, skip
 			if( buf[0]=='#' ) continue;
 
-			if (!isxdigit(buf[0])) {
+			if (!isxdigit((unsigned char)buf[0])) {
 				PrintAndLog("File content error. '%s' must include 8 HEX symbols", buf);
 				continue;
 			}
