@@ -156,9 +156,9 @@ void FpgaSetupSsc(void)
 // ourselves, not to another buffer). The stuff to manipulate those buffers
 // is in apps.h, because it should be inlined, for speed.
 //-----------------------------------------------------------------------------
-bool FpgaSetupSscDma(uint8_t *buf, int len)
+bool FpgaSetupSscDma(uint8_t *buf, size_t len)
 {
-	if (buf == NULL) return false;
+	if (!buf) return false;
 
 	AT91C_BASE_PDC_SSC->PDC_PTCR = AT91C_PDC_RXTDIS;	// Disable DMA Transfer
 	AT91C_BASE_PDC_SSC->PDC_RPR = (uint32_t) buf;		// transfer to this memory address

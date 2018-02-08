@@ -363,8 +363,8 @@ bool usb_poll()
 	that the length available to read is non-zero, thus hopefully fixes the
 	bug.
 **/
-//bool usb_poll_validate_length()
-int usb_poll_validate_length()
+
+size_t usb_poll_validate_length()
 {
 	if (!usb_check()) return false;
 	if (!(pUdp->UDP_CSR[AT91C_EP_OUT] & btReceiveBank)) return false;

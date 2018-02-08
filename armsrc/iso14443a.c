@@ -2602,7 +2602,7 @@ void RAMFUNC SniffMifare(uint8_t param) {
 // EMV emulator. 
 // 
 //-----------------------------------------------------------------------------
-#define EMV_DMA_BUFFER_SIZE 4096LL
+#define EMV_DMA_BUFFER_SIZE 4096
 #define MAX_EMV_FRAME_SIZE  257
 #define MAX_EMV_PARITY_SIZE 33
 #define EMV_MAX_ATS_LEN 100
@@ -2623,30 +2623,30 @@ enum EMVEmlState {
 	eveLast
 };
 
-static inline int SscDmaProcess(uint8_t *dmaBuf, int len, uint8_t *data) {
-	int dataLen = 0;
-	int readBufDataP = data - dmaBuf;	// number of bytes we have processed so far
-	int dmaBufDataP = EMV_DMA_BUFFER_SIZE - AT91C_BASE_PDC_SSC->PDC_RCR; // number of bytes already transferred
+static inline size_t SscDmaProcess(uint8_t *dmaBuf, size_t bufSize, uint8_t *data) {
+	size_t dataLen;
+	size_t readBufDataP = data - dmaBuf;	// number of bytes we have processed so far
+	size_t dmaBufDataP = bufSize - AT91C_BASE_PDC_SSC->PDC_RCR; // number of bytes already transferred
 
 	if (readBufDataP <= dmaBufDataP){			// we are processing the same block of data which is currently being transferred
 		dataLen = dmaBufDataP - readBufDataP;	// number of bytes still to be processed
 	} else {									
 		//dataLen = EMV_DMA_BUFFER_SIZE - readBufDataP + dmaBufDataP; // number of bytes still to be processed
-		dataLen = EMV_DMA_BUFFER_SIZE - readBufDataP; 
+		dataLen = bufSize - readBufDataP; 
 	}
 
-	if(dataLen > 0) {
+	if(dataLen) {
 		// primary buffer was stopped ( <-- we lost data!
 		if (!AT91C_BASE_PDC_SSC->PDC_RCR) {
 			AT91C_BASE_PDC_SSC->PDC_RPR = (uint32_t) dmaBuf;
-			AT91C_BASE_PDC_SSC->PDC_RCR = EMV_DMA_BUFFER_SIZE;
+			AT91C_BASE_PDC_SSC->PDC_RCR = bufSize;
 			Dbprintf("RxEmpty ERROR!!! data length:%d", dataLen);
 		}
 
 		// secondary buffer sets as primary, secondary buffer was stopped
 		if (!AT91C_BASE_PDC_SSC->PDC_RNCR) {
 			AT91C_BASE_PDC_SSC->PDC_RNPR = (uint32_t) dmaBuf;
-			AT91C_BASE_PDC_SSC->PDC_RNCR = EMV_DMA_BUFFER_SIZE;
+			AT91C_BASE_PDC_SSC->PDC_RNCR = bufSize;
 		}
 	}
 
@@ -2864,8 +2864,8 @@ void RAMFUNC EMVEml(uint32_t param) {
 	// allocate the DMA buffer, used to stream samples from the FPGA
 	uint8_t *dmaBuf = BigBuf_malloc(EMV_DMA_BUFFER_SIZE);
 	uint8_t *data = dmaBuf;
-	int maxDataLen = 0;
-	int dataLen = 0;
+	size_t maxDataLen = 0;
+	size_t dataLen = 0;
 
 	enum EMVEmlState state = eveInitDone;
 
@@ -3011,6 +3011,7 @@ void RAMFUNC EMVEml(uint32_t param) {
 		
 		// work with USB
 		if (usb_get_length() >= 64) {
+		if (usb_poll_validate_length() >= AT91C_EP_IN_SIZE
 			rx_len = usb_read(rx, sizeof(UsbCommand));
 			if (rx_len) {
 				// exit from client or by button
