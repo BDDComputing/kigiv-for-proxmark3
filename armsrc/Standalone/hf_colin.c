@@ -384,7 +384,7 @@ void RunMod() {
     Dbprintf("%s HOLD ON : %s When you'll click, simm will stop", _RED_, _WHITE_);
     Dbprintf("Then %s immediately %s Well' try to %s dump our emulator state%s  in a %s chinese tag%s", _RED_, _WHITE_, _YELLOW_, _WHITE_, _CYAN_, _WHITE_);
     Dbprintf("SimulaWaiting...");
-    Mifare1ksim(0, 0, 0, NULL);
+    Mifare1ksim(0x12, 0, 0, NULL);
     Dbprintf("<- We're out of Emulation");
     // END SIM
 
